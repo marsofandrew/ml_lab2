@@ -6,7 +6,7 @@ from sklearn import preprocessing
 import common
 
 PARTS = 10
-MAX_NEIGHBOURS = 3
+MAX_NEIGHBOURS = 100
 
 
 def get_results(data, n_neighbours):
@@ -25,8 +25,6 @@ def get_results(data, n_neighbours):
 
 raw_data = np.loadtxt("glass.csv", delimiter=",", dtype=np.str)
 data = raw_data[1:, 2:]
-
-data = common.get_transformed_data(data)
-
+data = common.get_transformed_data(data[1:, 2:])
 for k in range(1, MAX_NEIGHBOURS + 1):
     print({k: get_results(data, k)})
