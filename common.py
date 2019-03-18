@@ -52,3 +52,16 @@ def count_quality_of_predictions(expected, predicted):
     main_diagonal = conf_matrix[0, 0] + conf_matrix[1, 1]
     amount = conf_matrix.sum()
     return main_diagonal / amount
+
+
+def learn(classifier, data, parts):
+    divided_data = divide_into_parts(data, parts)
+    results = []
+    for i in range(parts):
+        learn, test = get_learn_and_test_data(divided_data, [i])
+        x = learn[:, :-1]
+        y = learn[:, -1:].T[0]
+        classifier.fit(x, y)
+        predicted = classifier.predict(test[:, :-1])
+        results.append(count_quality_of_predictions(test[:, -1:], predicted))
+    return sum(results) / len(results)

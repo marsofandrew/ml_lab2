@@ -7,21 +7,11 @@ from sklearn import preprocessing
 import common
 
 MIN_PARTS = 2
-MAX_PARTS = 100
+MAX_PARTS = 25
 
 
 def get_results(data, parts):
-    divided_data = common.divide_into_parts(data, parts)
-    results = []
-    for i in range(parts):
-        learn, test = common.get_learn_and_test_data(divided_data, [i])
-        k_neighbour = KNeighborsClassifier(n_jobs=-1)
-        x = learn[:, :-1]
-        y = learn[:, -1:].T[0]
-        k_neighbour.fit(x, y)
-        predicted = k_neighbour.predict(test[:, :-1])
-        results.append(common.count_quality_of_predictions(test[:, -1:], predicted))
-    return sum(results) / len(results)
+    return common.learn(KNeighborsClassifier(n_jobs=-1), data, parts)
 
 
 def get_learning_results(min_parts: int, max_parts: int, data):
