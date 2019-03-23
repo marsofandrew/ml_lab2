@@ -4,12 +4,17 @@ import random
 import numpy as np
 from sklearn import preprocessing
 from sklearn import metrics
+from matplotlib import pyplot as plot
+
+TEST = 'test'
+LEARN = 'learn'
+CORRECT = 'correct'
 
 
 def get_transformed_data(data):
     oe = preprocessing.OrdinalEncoder()
     oe.fit(data)
-    return oe.transform(data)
+    return oe.transform(data), oe
 
 
 def divide_into_parts(data, parts, mix=True):
@@ -65,3 +70,4 @@ def learn(classifier, data, parts):
         predicted = classifier.predict(test[:, :-1])
         results.append(count_quality_of_predictions(test[:, -1:], predicted))
     return sum(results) / len(results)
+
