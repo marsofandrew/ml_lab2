@@ -11,7 +11,7 @@ MAX_PARTS = 25
 
 
 def get_results(data, parts):
-    return common.learn(KNeighborsClassifier(n_jobs=-1), data, parts)
+    return common.learn_and_count_quantity(KNeighborsClassifier(n_jobs=-1), data, parts)
 
 
 def get_learning_results(min_parts: int, max_parts: int, data):

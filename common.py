@@ -59,7 +59,7 @@ def count_quality_of_predictions(expected, predicted):
     return main_diagonal / amount
 
 
-def learn(classifier, data, parts):
+def learn_and_count_quantity(classifier, data, parts):
     divided_data = divide_into_parts(data, parts)
     results = []
     for i in range(parts):
@@ -70,4 +70,13 @@ def learn(classifier, data, parts):
         predicted = classifier.predict(test[:, :-1])
         results.append(count_quality_of_predictions(test[:, -1:], predicted))
     return sum(results) / len(results)
+
+def learn(classifier, data):
+    x = data[:, :-1]
+    y = data[:, -1:].T[0]
+    classifier.fit(x, y)
+
+def count_quantity(classifier, test_data):
+    predicted = classifier.predict(test_data[:, :-1])
+    return count_quality_of_predictions(test_data[:, -1:], predicted)
 
