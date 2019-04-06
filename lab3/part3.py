@@ -30,7 +30,8 @@ def step2():
 
 if __name__ == '__main__':
     raw_data = np.loadtxt("../spam7.csv", delimiter=",", dtype=np.str)
-    data = common.replace_text_data(raw_data[1:,:], SUBSTITUTES)
+    data = common.replace_text_data(raw_data[1:, :], SUBSTITUTES)
     data = np.array(data, dtype=np.float)
     best = step2()
+    print("best = ", best)
     classifier = DecisionTreeClassifier(max_depth=best[0], max_features=best[1], splitter=best[2], criterion=best[3])
