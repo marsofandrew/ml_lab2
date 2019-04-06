@@ -11,10 +11,11 @@ LEARN = 'learn'
 CORRECT = 'correct'
 
 
-def get_transformed_data(data):
-    oe = preprocessing.OrdinalEncoder()
-    oe.fit(data)
-    return oe.transform(data), oe
+def get_transformed_data(data, ordinal_encoder=None):
+    if ordinal_encoder is None:
+        ordinal_encoder = preprocessing.OrdinalEncoder()
+        ordinal_encoder.fit(data)
+    return ordinal_encoder.transform(data), ordinal_encoder
 
 
 def divide_into_parts(data, parts, mix=True):
@@ -67,16 +68,38 @@ def learn_and_count_quantity(classifier, data, parts):
         x = learn[:, :-1]
         y = learn[:, -1:].T[0]
         classifier.fit(x, y)
-        predicted = classifier.predict(test[:, :-1])
-        results.append(count_quality_of_predictions(test[:, -1:], predicted))
+        results.append(count_quantity(classifier, test))
     return sum(results) / len(results)
+
 
 def learn(classifier, data):
     x = data[:, :-1]
     y = data[:, -1:].T[0]
     classifier.fit(x, y)
 
+
 def count_quantity(classifier, test_data):
     predicted = classifier.predict(test_data[:, :-1])
     return count_quality_of_predictions(test_data[:, -1:], predicted)
 
+
+def show_plot_from_dict(results_dict: dict, name, y_name, x_name):
+    plot.plot(results_dict.keys(), results_dict.values())
+    plot.ylabel(y_name)
+    plot.xlabel(x_name)
+    plot.title(name)
+    plot.show()
+
+
+def find_key_of_max_value(dict_for_search: dict):
+    best_key = list(dict_for_search.keys())[0]
+    for key in dict_for_search.keys():
+        if dict_for_search[key] > dict_for_search[best_key]:
+            best_key = key
+    return best_key
+
+
+def replace_text_data(data, substitutes: list, substituted_key=-1):
+    for element in data:
+        element[substituted_key] = substitutes.index(element[substituted_key])
+    return data

@@ -1,8 +1,7 @@
 #!/usr/bin/python
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neighbors import DistanceMetric
-import common
+from common_utilities import common
 
 from matplotlib import pyplot as plot
 
@@ -32,6 +31,8 @@ def show_plot2(result: dict):
 def find_best_k(results_dict):
     best_k = MIN_NEIGHBORS
     for key in results_dict.keys():
+        if key < 3: continue
+        if key > 15: break
         if results_dict[key] > results_dict[best_k]:
             best_k = key
     return best_k
@@ -48,15 +49,31 @@ def create_classifiers(min_neighbours: int, max_neighbours: int, classifiers_par
     return classifiers_
 
 
+def get_special_results(classifier, index, data_set, parts):
+    divided_data = common.divide_into_parts(data_set, parts)
+    results = []
+    for i in range(parts):
+        learn, test = common.get_learn_and_test_data(divided_data, [i])
+        x = learn[:, :-1]
+        y = learn[:, -1:].T[0]
+        classifier.fit(x, y)
+        replacer = sum(test[:, index]) / len(test)
+        for el in test:
+            el[index] = replacer
+        results.append(common.count_quantity(classifier, test))
+    return sum(results) / len(results)
+
+
 if __name__ == '__main__':
-    raw_data = np.loadtxt("glass.csv", delimiter=",", dtype=np.str)
+    raw_data = np.loadtxt("../glass.csv", delimiter=",", dtype=np.str)
     data = np.array(raw_data[1:, 2:], dtype=np.float)
 
     results = {}
     for k in range(MIN_NEIGHBORS, 100 + 1):
         results[k] = get_results(data, k)
 
-    show_plot1(results)
+    print("part 1 has finished")
+    # show_plot1(results)
 
     classifiers = [
         KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric='euclidean'),
@@ -64,9 +81,8 @@ if __name__ == '__main__':
         KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric="chebyshev"),
         KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric="minkowski"),
         KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric="minkowski", p=4),
-        KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric="minkowski", p=10),
         KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric="minkowski", p=8),
-        KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric="minkowski", p=1)
+        KNeighborsClassifier(n_neighbors=3, n_jobs=-1, metric="minkowski", p=9)
     ]
     results2 = {}
     for classifier_item in classifiers:
@@ -75,7 +91,12 @@ if __name__ == '__main__':
 
     best_k = find_best_k(results)
     print("best prediction:", "k =", best_k, "percent =", results[best_k] * 100)
-    classifier = KNeighborsClassifier(best_k, n_jobs=-1)
-    common.learn_and_count_quantity(classifier, data, PARTS)
-    predicted = classifier.predict([[1.516, 11.7, 1.01, 1.19, 72.59, 0.43, 11.44, 0.02, 0.1]])
+    classifier_best = KNeighborsClassifier(n_neighbors=best_k, n_jobs=-1)
+    common.learn_and_count_quantity(classifier_best, data, PARTS)
+    predicted = classifier_best.predict(np.array([[1.516, 11.7, 1.01, 1.19, 72.59, 0.43, 11.44, 0.02, 0.1]]))
     print(predicted)
+
+    special_res = {}
+    for i in range(9):
+        special_res[i] = get_special_results(classifier_best, i, data, 10)
+    print(special_res)
