@@ -55,7 +55,9 @@ def get_learn_and_test_data(divided_data, test_indexes: list):
 
 def count_quality_of_predictions(expected, predicted):
     conf_matrix = metrics.confusion_matrix(expected, predicted)
-    main_diagonal = conf_matrix[0, 0] + conf_matrix[1, 1]
+    main_diagonal = 0
+    for i in range(len(conf_matrix)):
+        main_diagonal += conf_matrix[i, i]
     amount = conf_matrix.sum()
     return main_diagonal / amount
 
