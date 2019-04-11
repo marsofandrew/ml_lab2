@@ -11,10 +11,14 @@ LEARN = 'learn'
 CORRECT = 'correct'
 
 
-def get_transformed_data(data, ordinal_encoder=None):
-    if ordinal_encoder is None:
-        ordinal_encoder = preprocessing.OrdinalEncoder()
-        ordinal_encoder.fit(data)
+def get_transformed_data(data, ordinal_encoder=preprocessing.OrdinalEncoder()):
+    """
+    Transform provided by ordinal encoder
+    :param data: dataset for transforming
+    :param ordinal_encoder: encoder, as default preprocessing.OrdinalEncoder()
+    :return: transformed data, ordinal_encoder
+    """
+    ordinal_encoder.fit(data)
     return ordinal_encoder.transform(data), ordinal_encoder
 
 

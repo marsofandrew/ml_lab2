@@ -19,8 +19,8 @@ def step2():
                 for criterion in CRITERION:
                     classifier = DecisionTreeClassifier(criterion=criterion, splitter=split_type, max_features=features,
                                                         max_depth=depth)
-                    results2[(depth, features, split_type, criterion)] = (common.learn_and_count_quantity(classifier,
-                                                                                                          data, PARTS))
+                    results2[(depth, features, split_type, criterion)] = common.learn_and_count_quantity(classifier,
+                                                                                                         data, PARTS)
 
     print("max_depth", "max_features", "splitter", "criterion", "quantity")
     for element in results2.keys():
