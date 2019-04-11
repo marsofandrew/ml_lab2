@@ -1,6 +1,4 @@
 #!/usr/bin/python
-import os
-os.environ["PATH"] += 'C:\Program Files (x86)\Graphviz2.38\bin\dot.exe'
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree

@@ -1,7 +1,10 @@
 #!/usr/bin/python
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
 from common_utilities import common
+import graphviz
+
 
 SUBSTITUTES = ['"y"', '"n"']
 MAX_DEPTH = 50
@@ -35,3 +38,7 @@ if __name__ == '__main__':
     best = step2()
     print("best = ", best)
     classifier = DecisionTreeClassifier(max_depth=best[0], max_features=best[1], splitter=best[2], criterion=best[3])
+    print(common.count_quantity(classifier, data))
+    dot_data = tree.export_graphviz(classifier)
+    graph = graphviz.Source(dot_data)
+    graph.save("graph_part3", "..")
