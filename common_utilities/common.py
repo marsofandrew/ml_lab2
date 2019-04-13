@@ -6,10 +6,6 @@ from sklearn import preprocessing
 from sklearn import metrics
 from matplotlib import pyplot as plot
 
-TEST = 'test'
-LEARN = 'learn'
-CORRECT = 'correct'
-
 
 def get_transformed_data(data, ordinal_encoder=preprocessing.OrdinalEncoder()):
     """
@@ -70,10 +66,8 @@ def learn_and_count_quantity(classifier, data, parts):
     divided_data = divide_into_parts(data, parts)
     results = []
     for i in range(parts):
-        learn, test = get_learn_and_test_data(divided_data, [i])
-        x = learn[:, :-1]
-        y = learn[:, -1:].T[0]
-        classifier.fit(x, y)
+        learn_data, test = get_learn_and_test_data(divided_data, [i])
+        learn(classifier, learn_data)
         results.append(count_quantity(classifier, test))
     return sum(results) / len(results)
 

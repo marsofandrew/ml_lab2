@@ -1,10 +1,15 @@
 #!/usr/bin/python
+
 import numpy as np
-from sklearn import svm
 from common_utilities import common
 from matplotlib import pyplot as plot
 
 SUBSTITUTES = ['red', 'green']
+
+
+def get_data_from_file(filename):
+    raw_data = np.loadtxt(filename, delimiter='\t', dtype=np.str)
+    return np.array(common.replace_text_data(raw_data[1:, 1:], SUBSTITUTES), dtype=np.float)
 
 
 def show_plots(learn_data, test_data, classifier):
@@ -31,24 +36,3 @@ def show_plots(learn_data, test_data, classifier):
     for elem in test_data:
         plot.scatter(elem[0], elem[1], c=SUBSTITUTES[int(elem[-1])])
     plot.show()
-
-
-def get_data_from_file(filename):
-    raw_data = np.loadtxt(filename, delimiter='\t', dtype=np.str)
-    return np.array(common.replace_text_data(raw_data[1:, 1:], SUBSTITUTES), dtype=np.float)
-
-
-def main():
-    learn_data = get_data_from_file("resources/svmdata1.txt")
-    test_data = get_data_from_file("resources/svmdata1test.txt")
-    classifier = svm.SVC(kernel='linear')
-    common.learn(classifier, learn_data)
-    quantity_learn = common.count_quantity(classifier, learn_data)
-    quantity_test = common.count_quantity(classifier, test_data)
-    print("Quantity on:\nlearn_data: {}\ntest_data: {}".format(quantity_learn, quantity_test))
-    print("support vectors:", sum(classifier.n_support_))
-    show_plots(learn_data, test_data, classifier)
-
-
-if __name__ == '__main__':
-    main()
