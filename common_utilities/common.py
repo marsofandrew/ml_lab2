@@ -103,3 +103,12 @@ def replace_text_data(data, substitutes: list, substituted_key=-1):
     for element in data:
         element[substituted_key] = substitutes.index(element[substituted_key])
     return data
+
+def executor(function):
+    if not callable(function):
+        raise ValueError('function must be callable and without parameters')
+    print("{} is started".format(function.__name__))
+    function()
+    print("{} is finished".format(function.__name__))
+
+

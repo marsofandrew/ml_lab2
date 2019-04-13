@@ -88,6 +88,7 @@ def part3():
 
 
 if __name__ == '__main__':
-    # part1()
-    # part2()
-    part3()
+    common.executor(part1)
+    common.executor(part2)
+    common.executor(part3)
+
