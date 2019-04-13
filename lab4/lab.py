@@ -67,8 +67,27 @@ def part2():
 def part3():
     learn_data = get_data_from_file("resources/svmdata3.txt")
     test_data = get_data_from_file("resources/svmdata3test.txt")
+    kernels = ['poly', 'rbf', 'sigmoid']
+    results = {}
+    for kernel in kernels:
+        classifier = svm.SVC(kernel=kernel)
+        common.learn(classifier, learn_data)
+        results[kernel] = common.count_quantity(classifier, test_data)
+    print(results)
+    print("best:", common.find_key_of_max_value(results))
+
+    results2 = {}
+    i = 0
+    while i <= 15:
+        classifier = svm.SVC(kernel='poly', degree=i, gamma='auto')
+        common.learn(classifier, learn_data)
+        results2[i] = common.count_quantity(classifier, test_data)
+        i += 1
+    print(results2)
+    common.show_plot_from_dict(results2, "quantity(degree)", 'quantity', 'degree')
 
 
 if __name__ == '__main__':
     # part1()
-    part2()
+    # part2()
+    part3()
