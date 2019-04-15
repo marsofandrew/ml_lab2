@@ -2,6 +2,12 @@
 from sklearn import svm
 from lab4.helpers import *
 
+KERNELS = ['poly', 'rbf', 'sigmoid']
+
+
+def exit_command():
+    exit(0)
+
 
 def find_best_c(learn_data, test_data, expected_quantity=1.0, min_parameter=0.01, max_parameter=None, step=0.01):
     """
@@ -67,9 +73,8 @@ def part2():
 def part3():
     learn_data = get_data_from_file("resources/svmdata3.txt")
     test_data = get_data_from_file("resources/svmdata3test.txt")
-    kernels = ['poly', 'rbf', 'sigmoid']
     results = {}
-    for kernel in kernels:
+    for kernel in KERNELS:
         classifier = svm.SVC(kernel=kernel)
         common.learn(classifier, learn_data)
         results[kernel] = common.count_quantity(classifier, test_data)
@@ -79,7 +84,7 @@ def part3():
     results2 = {}
     i = 0
     while i <= 15:
-        classifier = svm.SVC(kernel='poly', degree=i, gamma='auto')
+        classifier = svm.SVC(kernel='poly', degree=i, gamma='scale')
         common.learn(classifier, learn_data)
         results2[i] = common.count_quantity(classifier, test_data)
         i += 1
@@ -87,8 +92,42 @@ def part3():
     common.show_plot_from_dict(results2, "quantity(degree)", 'quantity', 'degree')
 
 
-if __name__ == '__main__':
-    common.executor(part1)
-    common.executor(part2)
-    common.executor(part3)
+def part4():
+    learn_data = get_data_from_file("resources/svmdata4.txt")
+    test_data = get_data_from_file("resources/svmdata4test.txt")
 
+    classifiers = [
+        svm.SVC(kernel=KERNELS[0], gamma='scale'),
+        svm.SVC(kernel=KERNELS[1], gamma='scale'),
+        svm.SVC(kernel=KERNELS[2], gamma='scale')
+    ]
+    results = {}
+    for classifier in classifiers:
+        common.learn(classifier, learn_data)
+        results[classifier] = common.count_quantity(classifier, test_data)
+    print(results)
+
+    best_classifier = common.find_key_of_max_value(results)
+    print("best classifier: {}; quantity: {}".format(best_classifier, results[best_classifier]))
+    show_plots(learn_data, test_data, best_classifier)
+
+
+if __name__ == '__main__':
+    functions = {
+        "part1": part1,
+        "part2": part2,
+        "part3": part3,
+        "part4": part4,
+        "exit": exit_command
+    }
+
+    while True:
+        print("\n\n*******************************************\n")
+        print("Write command, you can one from the following:\n{}".format(functions.keys()))
+        command = input("Input command: ").strip()
+        ex_command = functions.get(command, None)
+        if ex_command is not None:
+            common.executor(ex_command)
+        else:
+            print("You input unsupported command")
+        print("****************************************")
