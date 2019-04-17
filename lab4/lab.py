@@ -1,8 +1,10 @@
 #!/usr/bin/python
 from sklearn import svm
 from lab4.helpers import *
+import math
 
 KERNELS = ['poly', 'rbf', 'sigmoid']
+GAMMAS = ['auto', 'scale']
 
 
 def exit_command():
@@ -112,12 +114,38 @@ def part4():
     show_plots(learn_data, test_data, best_classifier)
 
 
+def part5():
+    learn_data = get_data_from_file("resources/svmdata5.txt")
+    test_data = get_data_from_file("resources/svmdata5test.txt")
+    results = {}
+    full_results = {}
+    t_results = {}
+    for kernel in KERNELS:
+        for gamma in GAMMAS:
+            classifier = svm.SVC(kernel=kernel, gamma=gamma)
+            common.learn(classifier, learn_data)
+            learn_quantity = common.count_quantity(classifier, learn_data)
+            test_quantity = common.count_quantity(classifier, test_data)
+            t_results[(kernel, gamma)] = test_quantity
+            results[(kernel, gamma)] = math.fabs(learn_quantity - test_quantity)
+            full_results[(kernel, gamma)] = {'learn_data': learn_quantity, 'test_data': test_quantity}
+    print(results)
+    print(full_results)
+    kernel, gamma = common.find_key_of_max_value(results)
+    best_kernel, best_gamma = common.find_key_of_max_value(t_results)
+    print(kernel, gamma)
+    classifier = svm.SVC(kernel=kernel, gamma=gamma)
+    common.learn(classifier, learn_data)
+    show_plots(learn_data, test_data, classifier)
+
+
 if __name__ == '__main__':
     functions = {
         "part1": part1,
         "part2": part2,
         "part3": part3,
         "part4": part4,
+        "part5": part5,
         "exit": exit_command
     }
 
