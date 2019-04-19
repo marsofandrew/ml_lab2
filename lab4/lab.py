@@ -11,6 +11,7 @@ MAX_DEGREE = 15
 STEP_DEGREE = 0.1
 MIN_GAMMA = STEP_GAMMA
 
+
 def exit_command():
     exit(0)
 
@@ -85,7 +86,7 @@ def part3():
         common.learn(classifier, learn_data)
         results[kernel] = common.count_quantity(classifier, test_data)
     print(results)
-    kernel=common.find_key_of_max_value(results)
+    kernel = common.find_key_of_max_value(results)
     print("best:", kernel)
     classifier = svm.SVC(kernel=kernel)
     common.learn(classifier, learn_data)

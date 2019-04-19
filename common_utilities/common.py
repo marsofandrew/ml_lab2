@@ -92,6 +92,8 @@ def show_plot_from_dict(results_dict: dict, name, y_name, x_name):
 
 
 def find_key_of_max_value(dict_for_search: dict):
+    if len(dict_for_search.keys()) <= 0:
+        raise ValueError("Not enough data")
     best_key = list(dict_for_search.keys())[0]
     for key in dict_for_search.keys():
         if dict_for_search[key] > dict_for_search[best_key]:
@@ -104,11 +106,10 @@ def replace_text_data(data, substitutes: list, substituted_key=-1):
         element[substituted_key] = substitutes.index(element[substituted_key])
     return data
 
+
 def executor(function):
     if not callable(function):
         raise ValueError('function must be callable and without parameters')
     print("{} is started".format(function.__name__))
     function()
     print("{} is finished".format(function.__name__))
-
-
