@@ -1,10 +1,8 @@
 #!/usr/bin/python
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
-from sklearn import tree
+from lab3 import helper
 from common_utilities import common
-import graphviz
-
 
 PARTS = 4
 
@@ -13,9 +11,6 @@ if __name__ == '__main__':
     data = np.array(raw_data[:, 1:], dtype=np.int)
     classifier = DecisionTreeClassifier()
     quantity = common.learn_and_count_quantity(classifier, data, PARTS)
-    dot_data = tree.export_graphviz(classifier)
-    graph = graphviz.Source(dot_data)
-    graph.save("graph", "..")
-    #graph.render()
+    helper.create_graph_png(classifier, "part2.png")
     print(quantity)
     print(classifier.predict([[2, 1, 2, 1]]))

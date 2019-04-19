@@ -2,6 +2,7 @@
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from common_utilities import common
+from lab3 import helper
 
 MAX_DEPTH = 200
 CRITERION = ['gini', 'entropy']
@@ -12,8 +13,10 @@ BEST_DEFAULT = 0
 
 
 def step0():
-    quantity = common.learn_and_count_quantity(DecisionTreeClassifier(), data, PARTS)
+    classifier = DecisionTreeClassifier()
+    quantity = common.learn_and_count_quantity(classifier, data, PARTS)
     print(quantity)
+    helper.create_graph_png(classifier, "part1.png")
 
 
 def step1():
