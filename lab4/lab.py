@@ -64,16 +64,16 @@ def part2():
     learn_data = get_data_from_file("resources/svmdata2.txt")
     test_data = get_data_from_file("resources/svmdata2test.txt")
 
-    def show_best_c(title):
+    def show_best_c(title, learn_data_param, test_data_param, min_parameter):
         print(title)
-        c, classifier = find_best_c(learn_data, learn_data)
+        c, classifier = find_best_c(learn_data_param, test_data_param, min_parameter=min_parameter)
         print("parameter c: {}\nquantity on learn data:{}\nquantity on test data: {}".format(c, common.count_quantity(
-            classifier, learn_data), common.count_quantity(classifier, test_data)))
+            classifier, learn_data), common.count_quantity(classifier, test_data_param)))
         print("support vectors:", sum(classifier.n_support_), ':', classifier.n_support_)
         show_plots(learn_data, test_data, classifier)
 
-    show_best_c("find the best parameter c for learn data")
-    show_best_c("find the best parameter c for test data")
+    show_best_c("find the best parameter c for learn data", learn_data, learn_data, 0.01)
+    show_best_c("find the best parameter c for test data", learn_data, test_data, 1)
 
 
 def part3():
@@ -85,7 +85,11 @@ def part3():
         common.learn(classifier, learn_data)
         results[kernel] = common.count_quantity(classifier, test_data)
     print(results)
-    print("best:", common.find_key_of_max_value(results))
+    kernel=common.find_key_of_max_value(results)
+    print("best:", kernel)
+    classifier = svm.SVC(kernel=kernel)
+    common.learn(classifier, learn_data)
+    show_plots(learn_data, test_data, classifier)
 
     results2 = {}
     i = 0
