@@ -5,7 +5,11 @@ import math
 
 KERNELS = ['poly', 'rbf', 'sigmoid']
 GAMMAS = ['auto', 'scale']
-
+MAX_GAMMA = 15
+STEP_GAMMA = 0.1
+MAX_DEGREE = 15
+STEP_DEGREE = 0.1
+MIN_GAMMA = STEP_GAMMA
 
 def exit_command():
     exit(0)
@@ -59,17 +63,17 @@ def part1():
 def part2():
     learn_data = get_data_from_file("resources/svmdata2.txt")
     test_data = get_data_from_file("resources/svmdata2test.txt")
-    print("find the best parameter c for learn data")
-    c, classifier = find_best_c(learn_data, learn_data)
-    print("parameter c: {}\nquantity on learn data:{}\nquantity on test data: {}".format(c, common.count_quantity(
-        classifier, learn_data), common.count_quantity(classifier, test_data)))
-    print("support vectors:", sum(classifier.n_support_), ':', classifier.n_support_)
-    print("find the best parameter c for test data")
-    c, classifier = find_best_c(learn_data, test_data, min_parameter=1)
-    print("parameter c: {}\nquantity on learn data:{}\nquantity on test data: {}".format(c, common.count_quantity(
-        classifier, learn_data), common.count_quantity(classifier, test_data)))
-    print("support vectors:", sum(classifier.n_support_), ':', classifier.n_support_)
-    show_plots(learn_data, test_data, classifier)
+
+    def show_best_c(title):
+        print(title)
+        c, classifier = find_best_c(learn_data, learn_data)
+        print("parameter c: {}\nquantity on learn data:{}\nquantity on test data: {}".format(c, common.count_quantity(
+            classifier, learn_data), common.count_quantity(classifier, test_data)))
+        print("support vectors:", sum(classifier.n_support_), ':', classifier.n_support_)
+        show_plots(learn_data, test_data, classifier)
+
+    show_best_c("find the best parameter c for learn data")
+    show_best_c("find the best parameter c for test data")
 
 
 def part3():
@@ -85,11 +89,11 @@ def part3():
 
     results2 = {}
     i = 0
-    while i <= 15:
+    while i <= MAX_DEGREE:
         classifier = svm.SVC(kernel='poly', degree=i, gamma='scale')
         common.learn(classifier, learn_data)
         results2[i] = common.count_quantity(classifier, test_data)
-        i += 1
+        i += STEP_DEGREE
     print(results2)
     common.show_plot_from_dict(results2, "quantity(degree)", 'quantity', 'degree')
 
@@ -121,7 +125,8 @@ def part5():
     full_results = {}
     t_results = {}
     for kernel in KERNELS:
-        for gamma in GAMMAS:
+        gamma = MIN_GAMMA
+        while gamma <= MAX_GAMMA:
             classifier = svm.SVC(kernel=kernel, gamma=gamma)
             common.learn(classifier, learn_data)
             learn_quantity = common.count_quantity(classifier, learn_data)
@@ -129,14 +134,21 @@ def part5():
             t_results[(kernel, gamma)] = test_quantity
             results[(kernel, gamma)] = math.fabs(learn_quantity - test_quantity)
             full_results[(kernel, gamma)] = {'learn_data': learn_quantity, 'test_data': test_quantity}
+            gamma += STEP_GAMMA
     print(results)
     print(full_results)
-    kernel, gamma = common.find_key_of_max_value(results)
+    kernel_res, gamma_res = common.find_key_of_max_value(results)
     best_kernel, best_gamma = common.find_key_of_max_value(t_results)
-    print(kernel, gamma)
-    classifier = svm.SVC(kernel=kernel, gamma=gamma)
-    common.learn(classifier, learn_data)
-    show_plots(learn_data, test_data, classifier)
+
+    def visualization(kernel, gamma, title):
+        print(title)
+        print(kernel, gamma)
+        classifier = svm.SVC(kernel=kernel, gamma=gamma)
+        common.learn(classifier, learn_data)
+        show_plots(learn_data, test_data, classifier)
+
+    visualization(kernel_res, gamma_res, "retraining")
+    visualization(best_kernel, best_gamma, "normal")
 
 
 if __name__ == '__main__':
