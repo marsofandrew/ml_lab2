@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
     while True:
         print("\n\n*******************************************\n")
-        print("Write command, you can one from the following:\n{}".format(functions.keys()))
+        print("Write command, you can chose one of the following:\n{}".format(functions.keys()))
         command = input("Input command: ").strip()
         ex_command = functions.get(command, None)
         if ex_command is not None:
