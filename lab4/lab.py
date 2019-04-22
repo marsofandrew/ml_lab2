@@ -5,8 +5,8 @@ import math
 
 KERNELS = ['poly', 'rbf', 'sigmoid']
 GAMMAS = ['auto', 'scale']
-MAX_GAMMA = 15
-STEP_GAMMA = 0.1
+MAX_GAMMA = 100
+STEP_GAMMA = 1
 MAX_DEGREE = 15
 STEP_DEGREE = 0.1
 MIN_GAMMA = STEP_GAMMA
@@ -129,6 +129,7 @@ def part5():
     results = {}
     full_results = {}
     t_results = {}
+
     for kernel in KERNELS:
         gamma = MIN_GAMMA
         while gamma <= MAX_GAMMA:
@@ -142,6 +143,7 @@ def part5():
             gamma += STEP_GAMMA
     print(results)
     print(full_results)
+
     kernel_res, gamma_res = common.find_key_of_max_value(results)
     best_kernel, best_gamma = common.find_key_of_max_value(t_results)
 
