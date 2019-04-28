@@ -174,7 +174,7 @@ if __name__ == '__main__':
         command = input("Input command: ").strip()
         ex_command = functions.get(command, None)
         if ex_command is not None:
-            common.executor(ex_command)
+            common.execute(ex_command)
         else:
             print("You input unsupported command")
         print("****************************************")

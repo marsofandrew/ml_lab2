@@ -107,7 +107,7 @@ def replace_text_data(data, substitutes: list, substituted_key=-1):
     return data
 
 
-def executor(function):
+def execute(function):
     if not callable(function):
         raise ValueError('function must be callable and without parameters')
     print("{} is started".format(function.__name__))

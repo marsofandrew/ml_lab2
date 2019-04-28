@@ -81,11 +81,12 @@ def part2_iteration(data_set, name_of_iteration):
     for index in range(1, len(data_set)):
         learn_data = np.concatenate((learn_data, data_set[index]))
     for scaler in SCALERS:
-        for metric in [distance.euclidean,
-                       lambda first, second: math.fabs(first[0] - second[0]) + math.fabs(first[1] - second[1])]:
+        for metric in [["euclidean", distance.euclidean],
+                       ["manhattan",
+                        lambda first, second: math.fabs(first[0] - second[0]) + math.fabs(first[1] - second[1])]]:
             normalize_data = scaler.fit_transform(learn_data)
-            clusters, curr_medoids = kmedoids.cluster(count_distances(normalize_data, metric))
-            print(scaler, metric)
+            clusters, curr_medoids = kmedoids.cluster(count_distances(normalize_data, metric[1]))
+            print(scaler, metric[0])
             visualization(learn_data, clusters, curr_medoids)
 
 
@@ -137,7 +138,7 @@ if __name__ == '__main__':
         command = input("input command: ")
         command = functions.get(command)
         if command is not None:
-            common.executor(command)
+            common.execute(command)
         else:
             print("unsupported command")
         print("\n")
