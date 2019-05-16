@@ -50,6 +50,8 @@ def get_learn_and_test_data(divided_data, test_indexes: list):
             test += part
         else:
             learn += part
+    if len(learn) <= 0:
+        learn = test
     return np.array(learn), np.array(test)
 
 
@@ -113,3 +115,8 @@ def execute(function):
     print("{} is started".format(function.__name__))
     function()
     print("{} is finished".format(function.__name__))
+
+
+def execute_all(function_list):
+    for function in function_list:
+        execute(function)
