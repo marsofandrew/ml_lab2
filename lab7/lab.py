@@ -3,8 +3,11 @@ from common_utilities import common
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.svm import SVR
+from sklearn.metrics import mean_squared_error
 from matplotlib import pyplot as plot
-
+MAX_EPSILON_P8 = 1.5
+EPSILON_P8_STEP = 0.1
 
 def __get_data(file_path, delimiter):
     dataset = np.loadtxt(file_path, dtype=np.str, delimiter=delimiter)
@@ -85,7 +88,19 @@ def part7():
 
 
 def part8():
-    pass
+    raw_data =__get_data('resources/svmdata6.txt', '\t')
+    data = np.array(raw_data[1:, 1:], dtype=np.float)
+    x = np.reshape(data[:,0], (data.shape[0], 1))
+    results = {}
+    epsilon = EPSILON_P8_STEP
+    while epsilon <= MAX_EPSILON_P8:
+        regressor = SVR(epsilon=epsilon, gamma='scale')
+        regressor.fit(x, data[:,1])
+        predictions = regressor.predict(x)
+        results[epsilon] = mean_squared_error(data[:, 1], predictions)
+        epsilon+=EPSILON_P8_STEP
+    print(results)
+    common.show_plot_from_dict(results, 'error(epsilon)', 'quantity', 'epsilon')
 
 
 def main():
@@ -111,4 +126,4 @@ def main():
 
 
 if __name__ == '__main__':
-    part7()
+    part8()
