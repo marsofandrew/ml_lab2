@@ -60,18 +60,28 @@ def part5():
 
 def part6():
     data = pd.read_csv("resources/sunspot.year.csv")
-    plot.plot(data['index'],data['value'],  c='b', label="data")
+    plot.plot(data['index'], data['value'], c='b', label="data")
     regressor = LinearRegression()
     x = np.reshape(np.array(data['index']), (len(data['index']), 1))
     regressor.fit(x, data['value'])
     predictions = regressor.predict(x)
-    plot.plot(x,predictions, 'r--', label='regression')
+    plot.plot(x, predictions, 'r--', label='regression')
     plot.legend()
     plot.show()
 
 
 def part7():
-    pass
+    data = pd.read_csv('resources/cars.csv')
+    plot.plot(data['speed'], data['dist'], c='black', label='data')
+    regressors = [('linear', LinearRegression(), 'r--'), ('ridge', Ridge(), 'g--')]
+    x = np.reshape(np.array(data['speed']), (len(data['speed']), 1))
+    for regressor in regressors:
+        regressor[1].fit(x, data['dist'])
+        predictions = regressor[1].predict(x)
+        plot.plot(x, predictions, regressor[2], label=regressor[0])
+        print("{}: predict for 40mps".format(regressor[0]), regressor[1].predict([[40]]))
+    plot.legend()
+    plot.show()
 
 
 def part8():
@@ -101,4 +111,4 @@ def main():
 
 
 if __name__ == '__main__':
-    part6()
+    part7()
