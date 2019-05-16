@@ -34,10 +34,10 @@ def part3():
 
 
 def part4():
-    def plot_part(data_element, color, label, regressor_color):
+    def plot_part(data_element, color, label, regressor_color, size_x=1):
         plot.plot(data_element, c=color, label=label)
         regressor = LinearRegression()
-        x = np.reshape(range(len(data_element)), (len(data_element), 1))
+        x = np.reshape(range(len(data_element)), (len(data_element), size_x))
         regressor.fit(x, data_element)
         predictions = regressor.predict(x)
         plot.plot(predictions, regressor_color, label='regression of {}'.format(label))
@@ -48,7 +48,7 @@ def part4():
     plot_part(data["CAC"], 'blue', 'CAC', 'b--')
     plot_part(data["FTSE"], 'green', 'DAX', 'g--')
     converted_data = np.multiply(0.25, (
-                np.array(data["DAX"]) + np.array(data["SMI"]) + np.array(data["CAC"]) + np.array(data["FTSE"])))
+            np.array(data["DAX"]) + np.array(data["SMI"]) + np.array(data["CAC"]) + np.array(data["FTSE"])))
     plot_part(converted_data, 'cyan', 'total', 'c--')
     plot.legend()
     plot.show()
@@ -59,7 +59,15 @@ def part5():
 
 
 def part6():
-    pass
+    data = pd.read_csv("resources/sunspot.year.csv")
+    plot.plot(data['index'],data['value'],  c='b', label="data")
+    regressor = LinearRegression()
+    x = np.reshape(np.array(data['index']), (len(data['index']), 1))
+    regressor.fit(x, data['value'])
+    predictions = regressor.predict(x)
+    plot.plot(x,predictions, 'r--', label='regression')
+    plot.legend()
+    plot.show()
 
 
 def part7():
@@ -93,4 +101,4 @@ def main():
 
 
 if __name__ == '__main__':
-    part4()
+    part6()
