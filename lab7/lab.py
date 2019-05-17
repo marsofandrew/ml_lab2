@@ -62,6 +62,21 @@ def part4():
 
 def part5():
     data = pd.read_csv('resources/JohnsonJohnson.csv')
+    data_q = [[] for _ in range(4)]
+    for row in data.iterrows():
+        if row[1][0].endswith("Q1"):
+            x1 = int(row[1][0].split(" ")[0])
+            data_q[0].append([x1, row[1][1]])
+        if row[1][0].endswith("Q2"):
+            x1 = int(row[1][0].split(" ")[0])
+            data_q[1].append([x1, row[1][1]])
+        if row[1][0].endswith("Q3"):
+            x1 = int(row[1][0].split(" ")[0])
+            data_q[2].append([x1, row[1][1]])
+        if row[1][0].endswith("Q4"):
+            x1 = int(row[1][0].split(" ")[0])
+            data_q[3].append([x1, row[1][1]])
+
     x = np.array(data['index'])
     for i in range(len(x)):
         x[i] = x[i].replace(" Q1", '.0')
@@ -83,6 +98,30 @@ def part5():
     plot.legend()
     plot.show()
 
+    results = {}
+    for i, data_element in enumerate(data_q):
+        data_element = np.array(data_element)
+        results[i] = {}
+        for regressor in regressors:
+            x = np.reshape(data_element[:, 0], (len(data_element[:, 0]), 1))
+            plot.plot(x, data_element[:, 1], c='black', label='data Q{}'.format(i))
+            regressor[1].fit(x, data_element[:, 1])
+            predictions = regressor[1].predict(x)
+            plot.plot(x, predictions, regressor[2], label="Q{}: {}".format(i, regressor[0]))
+            pred = regressor[1].predict([[2016]])
+            results[i][regressor[0]] = pred
+        plot.title("Q{}".format(i + 1))
+        plot.legend()
+        plot.show()
+
+    for element in regressors:
+        type = element[0]
+        predict = 0
+        for q in results.keys():
+            predict += results[q][type]
+        print(type, 'year', predict)
+
+    print(results)
 
 def part6():
     data = pd.read_csv("resources/sunspot.year.csv")
