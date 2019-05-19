@@ -6,7 +6,9 @@ from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.svm import SVR
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
+from sklearn.tree import DecisionTreeRegressor
 from matplotlib import pyplot as plot
+from lab7.custom_reducer import Reducer
 
 MAX_EPSILON_P8 = 1.5
 EPSILON_P8_STEP = 0.1
@@ -28,15 +30,41 @@ def part1():
 
 
 def part2():
-    pass
+    raw_data = __get_data("resources/reglab.txt", '\t')
+    data = raw_data[1:, :]
+    y = np.array(data[:, 0], dtype=np.float)
+    x = np.array(data[:, 1:], dtype=np.float)
+    regressors = [
+        ("Linear", LinearRegression)
+    ]
+    for regressor in regressors:
+        reducer = Reducer(regressor[1], mean_squared_error)
+        print("regressor: {}, removed indexes: {}".format(regressor[0], reducer.reduce(x, y)))
 
 
 def part3():
     raw_data = __get_data("resources/longley.csv", ',')
-    data = np.array(raw_data)
-
+    data = np.array(raw_data, dtype=np.float)
+    data = np.delete(data, -3, axis=1)
     divided_data = common.divide_into_parts(data, 2)
-    Ridge()
+    learn = divided_data[0]
+    test = divided_data[1]
+    results_learn = []
+    results_test = []
+    for i in range(0, 26):
+        lam = 10 ** (-3 + 0.2 * i)
+        regressor = Ridge(alpha=lam)
+        regressor.fit(learn[:, :-1], learn[:, -1])
+        test_predict = regressor.predict(test[:, :-1])
+        learn_predict = regressor.predict(learn[:, :-1])
+        learn_error = mean_squared_error(learn[:, -1], learn_predict)
+        test_error = mean_squared_error(test[:, -1], test_predict)
+        results_learn.append(learn_error)
+        results_test.append(test_error)
+    plot.plot(results_test, c='r', label='test_error')
+    plot.plot(results_learn, c='b', label='learn error')
+    plot.legend()
+    plot.show()
 
 
 def part4():
@@ -123,6 +151,7 @@ def part5():
 
     print(results)
 
+
 def part6():
     data = pd.read_csv("resources/sunspot.year.csv")
     plot.plot(data['index'], data['value'], c='b', label="data")
@@ -162,16 +191,28 @@ def part8():
         results[epsilon] = mean_squared_error(data[:, 1], predictions)
         epsilon += EPSILON_P8_STEP
     print(results)
-    common.show_plot_from_dict(results, 'error(epsilon)', 'quantity', 'epsilon')
+    common.show_plot_from_dict(results, 'error(epsilon)', 'error', 'epsilon')
 
 
 def part9():
-    pass
+    data = pd.read_csv("resources/nsw74psid1.csv")
+    y = np.array(data["re78"])
+    x = np.array(data)[:, :-1]
+    regressors = [
+        ("DecisionTree", DecisionTreeRegressor()),
+        ("Linear", LinearRegression()),
+        ("Ridge", Ridge()),
+        ("SVR", SVR(gamma='scale'))
+    ]
+
+    for regressor in regressors:
+        regressor[1].fit(x, y)
+        print("Type: {}; score: {}".format(regressor[0], regressor[1].score(x, y)))
 
 
 def main():
     functions = {
-        'exit': [exit],
+        'exit': [lambda :exit()],
         'exec part1': [part1],
         'exec part2': [part2],
         'exec part3': [part3],
@@ -186,11 +227,11 @@ def main():
     while True:
         cmd = input("input command:\n")
         commands = functions.get(cmd)
-        if cmd is None:
+        if commands is None:
             print("Unsupported commands")
         else:
             common.execute_all(commands)
 
 
 if __name__ == '__main__':
-    part5()
+    main()
